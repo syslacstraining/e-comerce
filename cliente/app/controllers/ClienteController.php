@@ -20,11 +20,10 @@ class ClienteController extends BaseController {
 		}
 	}
 /*FUNCION PARA CERRAR SECION*/
-public function getSalirsession(){
+public function getCerrarsession(){
 	Session::forget("cliente");
-	return Redirect::to("/login");
-	/*Ha salir a pagian que inico 
-	return Redirect::back();*/
+	
+	return Redirect::back();
 	}
 
 }

@@ -1,18 +1,26 @@
 @extends('templates.maestroinicio')
 @section('body')
+
+
+	
 	<h1>MI CARRITO</h1>
 
-<table>
+<table class="table">
 	<thead>
 		<td>
 		Fecha
 		</td>
 
+		<td>
+		Monto
+		</td>
 
 		<td>
+		Estado
 		</td>
-		<td>
-		</td>
+
+
+		
 	</thead>
 
 
@@ -23,6 +31,8 @@
 
 		<tr>
 		<td><?=$miscomprass->fecha_venta?></td>
+		<td><?=$miscomprass->total?></td>
+		<td>aprobado</td>
 		
 		</tr>
 

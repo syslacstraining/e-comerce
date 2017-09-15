@@ -37,18 +37,12 @@ Route::get('/login', function()
 
 
 
+
 Route::group(array('before'=>'auth'), function()
 	{
-		Route::get('/pagina1', function()
-		{
-			return View::make('session.pagina1');
-		});
-		Route::get('/pagina2', function()
-		{
-			return View::make('session.pagina2');
-		});
-Route::controller("/compras","MiscomprasController");
+		
 
+		Route::controller("/compras","MiscomprasController");
 	
 	}
 	);

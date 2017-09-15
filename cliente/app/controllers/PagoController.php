@@ -12,6 +12,8 @@ class PagoController extends BaseController {
 		$buyerEmail=$_REQUEST['buyerEmail'];
 		$transactionState=$_REQUEST['transactionState'];
 
+
+
 		if($transactionState==4)
 		{
 
@@ -46,7 +48,6 @@ class PagoController extends BaseController {
 
 		  		$detalleventa->save();
 
-		  		
 
 		  	}
 
@@ -54,8 +55,17 @@ class PagoController extends BaseController {
 		 	$carrito->total=0;
 		 	$carrito->productos=[];
 		 	Session::put("carrito",json_encode($carrito));
+
+
+		 	return View::make('pagos.frmPagoConfirmado');
 			
 		}
+		else
+		{
+			return View::make('pagos.frmPagoRechazado');
+		}
+
+
 		
 
 
