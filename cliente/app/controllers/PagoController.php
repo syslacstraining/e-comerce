@@ -14,6 +14,46 @@ class PagoController extends BaseController {
 
 		if($transactionState==4)
 		{
+
+			$pago = new Pago();
+
+		  	$pago->idtransaccion=$transactionId;
+		  	$pago->estado=$transactionState;
+		  	$pago->idclientepago=$buyerEmail;
+
+		  	$pago->save();
+
+		  	$usuario=json_decode(Session::get("cliente"));
+			$carrito=json_decode(Session::get("carrito"));
+
+		  	$venta = new Venta();
+		  	$venta->idcliente=$usuario->id;
+		  	$venta->fecha_venta=new DateTime();
+		  	$venta->idpago=$pago->id;
+		  	$venta->total=$carrito->total;
+
+		  	$venta->save();
+
+		  	
+
+		  	foreach ($carrito->productos as $itemProducto)
+		  	{
+		  		$detalleventa=new Detalleventa();
+		  		$detalleventa->idventa=$venta->id;
+		  		$detalleventa->idproducto=$itemProducto->id;
+		  		$detalleventa->cantidad=$itemProducto->cantidad;
+		  		$detalleventa->precio_venta=$itemProducto->precio;
+
+		  		$detalleventa->save();
+
+		  		
+
+		  	}
+
+		 	$carrito=new  stdClass();
+		 	$carrito->total=0;
+		 	$carrito->productos=[];
+		 	Session::put("carrito",json_encode($carrito));
 			
 		}
 		
