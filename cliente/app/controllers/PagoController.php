@@ -1,18 +1,50 @@
 <?php
 
-class PagoController extends BaseController {
+class PagoController extends BaseController
+{
 
-
-	public function getRespuestapago()
+	public function getObtenerinformacionpago($monto)
 	{
 
-		
-		$transactionId = $_REQUEST['transactionId'];
-		$processingDate=$_REQUEST['processingDate'];
+		$api_key="4Vj8eK4rloUd272L48hsrarnUA";
+
+		$email_cliente="cliente1@syslacstraining.com";
+
+		if(Session::has("cliente"))
+		{
+			$cliente=json_decode(Session::get("cliente"));
+			$email_cliente=$cliente->correo_electronico;
+		}
+
+		$info_pago=new stdClass();
+
+		$info_pago->merchantId="508029";
+		$info_pago->accountId="512323";
+		$info_pago->description="MIS VENTAS EN LINEA";
+		$info_pago->referenceCode="PAGO001";
+		$info_pago->amount=$monto;
+		$info_pago->tax="0";
+		$info_pago->taxReturnBase="0";
+		$info_pago->currency="PEN";
+		$info_pago->signature=md5($api_key."~".$info_pago->merchantId."~".$info_pago->referenceCode."~".$monto."~PEN");
+		$info_pago->test="1";
+		$info_pago->buyerEmail=$email_cliente;
+		$info_pago->responseUrl="http://pagos.syslacstraining.com/pagos/respuestapagos";
+		$info_pago->confirmationUrl="http://pagos.syslacstraining.com/pagos/confirmacionpagos";
+
+
+		return  json_encode($info_pago);
+
+
+	} 
+
+	public function getRespuestapagos()
+	{
+
+		$transactionState = $_REQUEST['transactionState'];
+		$processingDate	=$_REQUEST['processingDate'];
 		$buyerEmail=$_REQUEST['buyerEmail'];
-		$transactionState=$_REQUEST['transactionState'];
-
-
+		$transactionId = $_REQUEST['transactionId'];
 
 		if($transactionState==4)
 		{
@@ -47,7 +79,7 @@ class PagoController extends BaseController {
 		  		$detalleventa->precio_venta=$itemProducto->precio;
 
 		  		$detalleventa->save();
-
+		  		
 
 		  	}
 
@@ -56,69 +88,18 @@ class PagoController extends BaseController {
 		 	$carrito->productos=[];
 		 	Session::put("carrito",json_encode($carrito));
 
-
-		 	return View::make('pagos.frmPagoConfirmado');
-			
-		}
-		else
-		{
-			return View::make('pagos.frmPagoRechazado');
-		}
-
-
-		
-
-
-
-		return $transactionId;
-
+		 	return View::make("pagos.frmConfirmacionPago");
+		 }
+		 else
+		 {
+		 	return View::make("pagos.frmErrorPago");
+		 }
 
 	}
 
-	public function getConfirmacionpago()
+
+	public function getConfirmacionpagos()
 	{
-		
-	}
-
-	public function getObtenerinformacionpago($monto)
-	{	
-		$apiKey="4Vj8eK4rloUd272L48hsrarnUA";
-		
-
-		$correo_cliente="cliente@syslacstraining.com";
-
-		if(Session::has("cliente"))
-		{
-			$cliente_actual=json_decode(Session::get("cliente"));
-			$correo_cliente=$cliente_actual->correo_electronico;
-		}
-
-		$info_pago=new stdClass();
-		$info_pago->merchantId="508029";		
-		$info_pago->accountId="512323";		
-		$info_pago->description="MI TIENDA EN LINEA";
-		$info_pago->referenceCode="PAGO";
-		$info_pago->amount=$monto;
-		$info_pago->tax=0;
-		$info_pago->taxReturnBase=0;
-		$info_pago->currency="PEN";
-
-		$signature=
-			md5(
-			$apiKey
-			."~".$info_pago->merchantId
-			."~".$info_pago->referenceCode
-			."~".$monto
-			."~".$info_pago->currency
-			);
-
-		$info_pago->signature=$signature;
-		$info_pago->test="1";
-		$info_pago->buyerEmail=$correo_cliente;
-		$info_pago->responseUrl=url()."/pagos/respuestapago";
-		$info_pago->confirmationUrl=url()."/pagos/confirmacionpago";
-
-		return  json_encode($info_pago);
 
 	}
 

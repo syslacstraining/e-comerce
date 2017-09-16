@@ -83,7 +83,7 @@ class CarritoController extends BaseController
 
 	 public function getIndex()
 	 {
-	 	return View::make("carrito");
+	 	return View::make("carrito.carrito");
 	 }
 
 

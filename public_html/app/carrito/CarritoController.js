@@ -7,6 +7,7 @@ function CargarCarrito()
 {
     $("#htotal").html("0");
     $("#botonPayuContainer").html("");
+    $("#idPayuButtonContainer").html("");
 
             $.ajax({
                 dataType: "json",
@@ -45,8 +46,10 @@ function CargarCarrito()
 
                      $("#htotal").val(carrito.total);
 
+                     
 
                      CrearBotonPayu();
+
 
 
             });   
@@ -95,111 +98,39 @@ function EliminarProductoCarrito(idproducto)
 }
 
 
-
-
 function CrearBotonPayu()
 {
 
-    var montoTotal=$("#htotal").val();
 
-    $.ajax({
-            dataType: "json",
+    var montoPago=$("#htotal").val();
+
+     $.ajax({
+                dataType: "json",
                 method:"GET",
-                url: "/pagos/obtenerinformacionpago/"+montoTotal
-                }) 
-             .done(function(info){
-                console.log(info);
-                
+                url: "/pagos/obtenerinformacionpago/"+montoPago
+                })
+            .done(function( infopago ){
 
-    var html_button_payu="\
-    <form method='post' action='https://sandbox.gateway.payulatam.com/ppp-web-gateway/'>\
-      <input name='merchantId'    type='hidden'  value='"+info.merchantId+"'>\
-      <input name='accountId'     type='hidden'  value='"+info.accountId+"'>\
-      <input name='description'   type='hidden'  value='"+info.description+"'>\
-      <input name='referenceCode' type='hidden'  value='"+info.referenceCode+"'>\
-      <input name='amount'        type='hidden'  value='"+info.amount+"'>\
-      <input name='tax'           type='hidden'  value='"+info.tax+"'>\
-      <input name='taxReturnBase' type='hidden'  value='"+info.taxReturnBase+"'>\
-      <input name='currency'      type='hidden'  value='"+info.currency+"'>\
-      <input name='signature'     type='hidden'  value='"+info.signature+"'>\
-      <input name='test'          type='hidden'  value='"+info.test+"'>\
-      <input name='buyerEmail'    type='hidden'  value='"+info.buyerEmail+"'>\
-      <input name='responseUrl'    type='hidden'  value='"+info.responseUrl+"'>\
-      <input name='confirmationUrl'     type='hidden'  value='"+info.confirmationUrl+"'>\
-      <input name='Submit'        type='submit'  value='Pagar'>\
-    </form>";
+            var html_button="<form method='post' action='https://sandbox.gateway.payulatam.com/ppp-web-gateway/'>\
+              <input name='merchantId'    type='hidden'  value='"+infopago.merchantId+"'   >\
+              <input name='accountId'     type='hidden'  value='"+infopago.accountId+"'   >\
+              <input name='description'   type='hidden'  value='"+infopago.description+"'   >\
+              <input name='referenceCode' type='hidden'  value='"+infopago.referenceCode+"'   >\
+              <input name='amount'        type='hidden'  value='"+infopago.amount+"'   >\
+              <input name='tax'           type='hidden'  value='"+infopago.tax+"'   >\
+              <input name='taxReturnBase' type='hidden'  value='"+infopago.taxReturnBase+"'   >\
+              <input name='currency'      type='hidden'  value='"+infopago.currency+"'   >\
+              <input name='signature'     type='hidden'  value='"+infopago.signature+"'   >\
+              <input name='test'          type='hidden'  value='"+infopago.test+"'   >\
+              <input name='buyerEmail'    type='hidden'  value='"+infopago.buyerEmail+"'   >\
+              <input name='responseUrl'    type='hidden'  value='"+infopago.responseUrl+"'   >\
+              <input name='confirmationUrl'    type='hidden'  value='"+infopago.confirmationUrl+"'   >\
+              <input name='Submit'        type='submit'  value='Pagar' >\
+            </form>";
 
+            $("#idPayuButtonContainer").append(html_button);
 
-$("#botonPayuContainer").append(html_button_payu);
-
-             }
-             )
-             .fail(function(){
-                console.log("error de controller");
-             })
-             ;
+    });
 
 }
 
-
-
-
-function CrearBotonPaypal()
-{
-		var totalcarrito=document.getElementById("htotal").value;
-
-        paypal.Button.render({
-
-            env: 'sandbox', // sandbox | production
-
-            // PayPal Client IDs - replace with your own
-            // Create a PayPal app: https://developer.paypal.com/developer/applications/create
-            client: {
-                sandbox:    'Acq9ayY5fr3aNZoWF34rGnO8TCR8Q6UwWLX6z23E-GCFnUVmqB_lpVjVLCskVWOlT10w-jyjoPrfelmH',
-                production: '<insert production client id>'
-            },
-
-            // Show the buyer a 'Pay Now' button in the checkout flow
-            commit: true,
-
-            // payment() is called when the button is clicked
-            payment: function(data, actions) {
-
-                // Make a call to the REST api to create the payment
-                return actions.payment.create({
-                    payment: {
-                        transactions: [
-                            {
-                                amount: { total: totalcarrito, currency: 'USD' }
-                            }
-                        ]
-                    }
-                });
-            },
-
-            // onAuthorize() is called when the buyer approves the payment
-            onAuthorize: function(data, actions) {
-
-                // Make a call to the REST api to execute the payment
-                return actions.payment.execute().then(function(transaction) {
-                    console.log(transaction);
-                    guardarTransaccion(transaction);
-                });
-            }
-
-        }, '#paypal-button-container');
-}
-        function guardarTransaccion(transaction)
-        {
-        	$.ajax({
-        		method:"POST",
-        		url: "/carrito/guardarpago",
-        		data: {idtransaccion: transaction.id, estado:transaction.state, idclientepago:transaction.payer.payer_info.payer_id}
-        	})
-        	.done(function( msg ){
-        		console.log("transaction guardado");
-
-        		window.location="/carrito/confirmarpago";
-
-        	});
-        }

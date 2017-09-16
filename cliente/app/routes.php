@@ -16,17 +16,13 @@ Route::get('/', function()
 	return Redirect::to('home');
 });
 
-
-Route::controller("/productos","ProductoController");
-Route::controller("/productosws","ProductoWSController");
-Route::controller("/usuarios","UsuarioController");
-
 Route::controller("/home","HomeController");
 Route::controller("/carrito","CarritoController");
 Route::controller("/clientes","ClienteController");
 
-
 Route::controller("/pagos","PagoController");
+
+
 
 
 
@@ -42,7 +38,7 @@ Route::group(array('before'=>'auth'), function()
 	{
 		
 
-		Route::controller("/compras","MiscomprasController");
+		Route::controller("/compras","ComprasController");
 	
 	}
 	);

@@ -1,6 +1,6 @@
 <?php
 
-class MiscomprasController extends BaseController
+class ComprasController extends BaseController
 {
 	
 	  public function getMiscompras()

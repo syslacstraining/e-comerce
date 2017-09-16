@@ -33,24 +33,17 @@
 	<div  class="row">
 
 	<h2>Total: S/. <span id="ltotal"></span>
-
-
-	<div id="botonPayuContainer">
-	</div>
-
-
-
-
-
-
-	</h2>
-
 	<input type="hidden" name="" id="htotal" value="">
 
-<div class="text-center" id="paypal-button-container"></div>
-
+	<div id="idPayuButtonContainer">
 		
 	</div>
+
+	
+	</h2>
+
+	
+
 </div>
 
 
